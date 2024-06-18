@@ -111,7 +111,7 @@ public static class Server
             {
                 headers.TryGetValue("Accept-Encoding", out string? encodings);
                 Console.WriteLine(encodings);
-                HashSet<string> encodingOptions = [.. encodings?.Split(',').Select(s => s.Trim())];
+                HashSet<string> encodingOptions = encodings == null ? [] : [.. encodings?.Split(',').Select(s => s.Trim())];
                 MemoryStream memoryStream = new(Encoding.UTF8.GetBytes(sContent));
                 b.Append("Content-Type: text/plain\r\n");
 

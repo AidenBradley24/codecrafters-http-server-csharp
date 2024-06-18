@@ -114,7 +114,7 @@ public static class Server
                 {
                     case "gzip":
                         Console.WriteLine("GZIP START");
-                        finalContent = new GZipStream(memoryStream, CompressionLevel.Optimal);
+                        finalContent = memoryStream;
                         b.Append($"Content-Encoding: gzip\r\n");
                         b.Append($"Content-Length: {finalContent.Length}\r\n");
                         Console.WriteLine("GZIP END");

@@ -120,7 +120,6 @@ public static class Server
                     Console.WriteLine("GZIP HERE");
                     finalContent = new GZipStream(memoryStream, CompressionMode.Compress, true);
                     b.Append($"Content-Encoding: gzip\r\n");
-                    b.Append($"Content-Length: {0}\r\n");
                     Console.WriteLine("YIPPEE!");
                 }
                 else
@@ -130,7 +129,9 @@ public static class Server
                     Console.WriteLine("NORMAL TEXT");
                 }
 
-                finalContent.Write(Encoding.UTF8.GetBytes(sContent)); 
+                finalContent.Write(Encoding.UTF8.GetBytes(sContent));
+                b.Append($"Content-Length: {finalContent.Length}\r\n");
+                Console.WriteLine("YIPPEE2!");
             }
             else if (content is byte[] bContent)
             {

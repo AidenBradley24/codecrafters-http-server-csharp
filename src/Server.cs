@@ -130,7 +130,7 @@ public static class Server
                 }
 
                 finalContent.Write(Encoding.UTF8.GetBytes(sContent));
-                b.Append($"Content-Length: {finalContent.Length}\r\n");
+                b.Append($"Content-Length: {finalContent.Position}\r\n");
                 Console.WriteLine("YIPPEE2!");
             }
             else if (content is byte[] bContent)

@@ -139,7 +139,13 @@ public static class Server
             Console.WriteLine("PRESTREAM");
 
             stream.Write(Encoding.UTF8.GetBytes(b.ToString()));
-            finalContent?.CopyTo(stream);
+            if (finalContent != null)
+            {
+                finalContent.Position = 0;
+                finalContent.CopyTo(stream);
+                finalContent.Close();
+            }
+
             Console.WriteLine("POSTSTREAM");
 
             client.Dispose();

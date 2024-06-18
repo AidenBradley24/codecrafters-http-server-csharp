@@ -106,7 +106,7 @@ public static class Server
             StringBuilder b = new();
             b.Append($"{httpVersion} {statusMessage}\r\n");
 
-            Stream? finalContent = null;
+            byte[]? finalContent = null;
             if (content is string sContent)
             {
                 headers.TryGetValue("Accept-Encoding", out string? encodings);
@@ -118,20 +118,21 @@ public static class Server
                 if (encodingOptions.Contains("gzip"))
                 {
                     Console.WriteLine("GZIP HERE");
-                    finalContent = new GZipStream(memoryStream, CompressionMode.Compress, true);
+                    var gzip = new GZipStream(memoryStream, CompressionMode.Compress, true);
+                    gzip.Write(Encoding.UTF8.GetBytes(sContent));
+                    gzip.Flush();
+                    gzip.Close();
                     b.Append($"Content-Encoding: gzip\r\n");
                     Console.WriteLine("YIPPEE!");
                 }
                 else
                 {
                     b.Append($"Content-Length: {sContent.Length}\r\n");
-                    finalContent = memoryStream;
+                    memoryStream.Write(Encoding.UTF8.GetBytes(sContent));
                     Console.WriteLine("NORMAL TEXT");
                 }
 
-                finalContent.Write(Encoding.UTF8.GetBytes(sContent));
-                Console.WriteLine("YIPPEE3!");
-                finalContent.Flush();
+                finalContent = memoryStream.ToArray();
                 b.Append($"Content-Length: {finalContent.Length}\r\n");
                 Console.WriteLine("YIPPEE2!");
             }

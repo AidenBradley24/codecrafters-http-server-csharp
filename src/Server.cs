@@ -24,8 +24,8 @@ while (!string.IsNullOrEmpty(lines[lineIndex]))
 {
     string line = lines[lineIndex];
     string label = line[..line.IndexOf(':')];
-    string content = line[(line.IndexOf(':') + 2)..];
-    headers.Add(label, content);
+    string detail = line[(line.IndexOf(':') + 2)..];
+    headers.Add(label, detail);
     lineIndex++;
 }
 

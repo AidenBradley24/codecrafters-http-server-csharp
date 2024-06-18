@@ -57,7 +57,7 @@ public static class Server
 
             Console.WriteLine("past headers");
 
-            string? requestBody = lineIndex + 1 < lines.Length ? string.Join("\r\n", lines[++lineIndex..])[..int.Parse(headers["Content-Length"])] : null;
+            string? requestBody = method == "POST" ? string.Join("\r\n", lines[++lineIndex..])[..int.Parse(headers["Content-Length"])] : null;
             Console.WriteLine("past request body");
 
             string[] urlSections = url.Split('/');

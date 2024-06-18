@@ -53,8 +53,6 @@ public static class Server
                 lineIndex++;
             }
 
-            Console.WriteLine("POST HEADERS");
-
             string? requestBody = method == "POST" ? string.Join("\r\n", lines[++lineIndex..])[..int.Parse(headers["Content-Length"])] : null;
             string[] urlSections = url.Split('/');
             string statusMessage = "200 OK";
@@ -69,7 +67,6 @@ public static class Server
                     content = urlSections[2];
                     break;
                 case "user-agent":
-                    Console.WriteLine("AGENT");
                     content = headers["User-Agent"];
                     break;
                 case "files":
@@ -101,7 +98,6 @@ public static class Server
                     statusMessage = "404 Not Found";
                     break;
             }
-            Console.WriteLine("PRE ENCODING");
 
             StringBuilder b = new();
             b.Append($"{httpVersion} {statusMessage}\r\n");
@@ -110,31 +106,26 @@ public static class Server
             if (content is string sContent)
             {
                 headers.TryGetValue("Accept-Encoding", out string? encodings);
-                Console.WriteLine(encodings);
                 HashSet<string> encodingOptions = encodings == null ? [] : [.. encodings?.Split(',').Select(s => s.Trim())];
                 MemoryStream memoryStream = new();
                 b.Append("Content-Type: text/plain\r\n");
 
                 if (encodingOptions.Contains("gzip"))
                 {
-                    Console.WriteLine("GZIP HERE");
                     var gzip = new GZipStream(memoryStream, CompressionMode.Compress, true);
                     gzip.Write(Encoding.UTF8.GetBytes(sContent));
                     gzip.Flush();
                     gzip.Close();
                     b.Append($"Content-Encoding: gzip\r\n");
-                    Console.WriteLine("YIPPEE!");
                 }
                 else
                 {
                     b.Append($"Content-Length: {sContent.Length}\r\n");
                     memoryStream.Write(Encoding.UTF8.GetBytes(sContent));
-                    Console.WriteLine("NORMAL TEXT");
                 }
 
                 finalContent = memoryStream.ToArray();
                 b.Append($"Content-Length: {finalContent.Length}\r\n");
-                Console.WriteLine("YIPPEE2!");
             }
             else if (content is byte[] bContent)
             {
@@ -145,15 +136,12 @@ public static class Server
             }
 
             b.Append("\r\n");
-            Console.WriteLine("PRESTREAM");
 
             stream.Write(Encoding.UTF8.GetBytes(b.ToString()));
             if (finalContent != null)
             {
                 stream.Write(finalContent);
             }
-
-            Console.WriteLine("POSTSTREAM");
 
             client.Dispose();
             return Task.CompletedTask;

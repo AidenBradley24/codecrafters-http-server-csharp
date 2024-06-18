@@ -57,6 +57,7 @@ public static class Server
             string[] urlSections = url.Split('/');
             string statusMessage = "200 OK";
             object? content = null;
+            Console.WriteLine(url);
             switch (urlSections[1])
             {
                 case "":

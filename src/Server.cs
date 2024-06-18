@@ -55,6 +55,7 @@ Task HandleClient(TcpClient client)
             break;
         case "files":
             FileInfo file = new(urlSections[2]);
+            Console.WriteLine(file.FullName);
             if (file.Exists)
             {
                 content = File.ReadAllBytes(file.FullName);

@@ -36,12 +36,11 @@ switch (urlSections[0])
 
 StringBuilder b = new();
 b.Append($"{httpVersion} {statusMessage}\r\n");
-Console.WriteLine(status);
 
 if (content != null)
 {
     b.Append("Content-Type: text/plain\r\n");
-    b.Append($"Content-Length: {content.length}\r\n");
+    b.Append($"Content-Length: {content.Length}\r\n");
 }
 b.Append("\r\n");
 if (content != null)
@@ -50,4 +49,4 @@ if (content != null)
     Console.WriteLine(content);
 }
 
-socket.Send(Encoding.UTF8.GetBytes(status));
+socket.Send(Encoding.UTF8.GetBytes(b.ToString()));

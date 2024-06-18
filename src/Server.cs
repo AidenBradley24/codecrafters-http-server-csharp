@@ -44,7 +44,7 @@ public static class Server
             string httpVersion = requestLine[2];
 
             // headers
-            Dictionary<string, string> headers = new();
+            Dictionary<string, string> headers = [];
             int lineIndex = 1;
             while (lineIndex < lines.Length && !string.IsNullOrEmpty(lines[lineIndex]))
             {
@@ -55,11 +55,15 @@ public static class Server
                 lineIndex++;
             }
 
+            Console.WriteLine("past headers");
+
             string requestBody = string.Join("\r\n", lines[++lineIndex..])[..int.Parse(headers["Content-Length"])];
             
             string[] urlSections = url.Split('/');
             string statusMessage = "200 OK";
             object? content = null;
+            Console.WriteLine(urlSections[1]);
+
             switch (urlSections[1])
             {
                 case "":

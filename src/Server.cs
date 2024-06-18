@@ -117,7 +117,7 @@ public static class Server
 
                 if (encodingOptions.Contains("gzip"))
                 {
-                    finalContent = memoryStream;
+                    finalContent = new GZipStream(memoryStream, CompressionLevel.Optimal);
                     b.Append($"Content-Encoding: gzip\r\n");
                     b.Append($"Content-Length: {finalContent.Length}\r\n");
                 }

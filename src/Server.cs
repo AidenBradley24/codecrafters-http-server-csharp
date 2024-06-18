@@ -46,7 +46,7 @@ public static class Server
             // headers
             Dictionary<string, string> headers = new();
             int lineIndex = 1;
-            while (!string.IsNullOrEmpty(lines[lineIndex]))
+            while (lineIndex < lines.Length && !string.IsNullOrEmpty(lines[lineIndex]))
             {
                 string line = lines[lineIndex];
                 string label = line[..line.IndexOf(':')];

@@ -141,7 +141,7 @@ public static class Server
                 MemoryStream memoryStream = new(bContent);
                 b.Append("Content-Type: application/octet-stream\r\n");
                 b.Append($"Content-Length: {bContent.Length}\r\n");
-                finalContent = memoryStream;
+                finalContent = memoryStream.ToArray();
             }
 
             b.Append("\r\n");
@@ -150,9 +150,7 @@ public static class Server
             stream.Write(Encoding.UTF8.GetBytes(b.ToString()));
             if (finalContent != null)
             {
-                finalContent.Position = 0;
-                finalContent.CopyTo(stream);
-                finalContent.Close();
+                stream.Write(finalContent);
             }
 
             Console.WriteLine("POSTSTREAM");

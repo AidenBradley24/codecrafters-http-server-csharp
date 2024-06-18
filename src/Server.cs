@@ -33,6 +33,7 @@ public static class Server
             stream.Read(buffer);
 
             string request = Encoding.UTF8.GetString(buffer);
+            Console.WriteLine(request);
             string[] lines = request.Split("\r\n");
 
             string[] requestLine = lines[0].Split(' ');

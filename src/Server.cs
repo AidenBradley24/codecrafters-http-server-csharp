@@ -21,13 +21,15 @@ string statusMessage = "200 OK";
 
 string? content = null;
 
-switch (urlSections[0])
+Console.WriteLine(urlSections[1]);
+
+switch (urlSections[1])
 {
     case "":
         // do nothing
         break;
     case "echo":
-        content = urlSections[1];
+        content = urlSections[2];
         break;
     default:
         statusMessage = "404 Not Found";

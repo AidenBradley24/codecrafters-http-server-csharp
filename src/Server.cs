@@ -109,6 +109,7 @@ public static class Server
             Stream? finalContent = null;
             if (content != null)
             {
+                Console.WriteLine("HAS CONTENT");
                 if (content is string sContent)
                 {
                     headers.TryGetValue("Accept-Encoding", out string? encodings);

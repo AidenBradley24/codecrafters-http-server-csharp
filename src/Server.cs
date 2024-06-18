@@ -107,36 +107,34 @@ public static class Server
             b.Append($"{httpVersion} {statusMessage}\r\n");
 
             Stream? finalContent = null;
-            if (content != null)
+            if (content is string sContent)
             {
-                Console.WriteLine("HAS CONTENT");
-                if (content is string sContent)
-                {
-                    headers.TryGetValue("Accept-Encoding", out string? encodings);
-                    HashSet<string> encodingOptions = [.. encodings?.Split(',').Select(s => s.Trim())];
-                    MemoryStream memoryStream = new(Encoding.UTF8.GetBytes(sContent));
-                    b.Append("Content-Type: text/plain\r\n");
+                headers.TryGetValue("Accept-Encoding", out string? encodings);
+                Console.WriteLine(encodings);
+                HashSet<string> encodingOptions = [.. encodings?.Split(',').Select(s => s.Trim())];
+                MemoryStream memoryStream = new(Encoding.UTF8.GetBytes(sContent));
+                b.Append("Content-Type: text/plain\r\n");
 
-                    if (encodingOptions.Contains("gzip"))
-                    {
-                        finalContent = memoryStream;
-                        b.Append($"Content-Encoding: gzip\r\n");
-                        b.Append($"Content-Length: {finalContent.Length}\r\n");
-                    }
-                    else
-                    {
-                        b.Append($"Content-Length: {sContent.Length}\r\n");
-                        finalContent = memoryStream;
-                    }
-                }
-                else if (content is byte[] bContent)
+                if (encodingOptions.Contains("gzip"))
                 {
-                    MemoryStream memoryStream = new(bContent);
-                    b.Append("Content-Type: application/octet-stream\r\n");
-                    b.Append($"Content-Length: {bContent.Length}\r\n");
+                    finalContent = memoryStream;
+                    b.Append($"Content-Encoding: gzip\r\n");
+                    b.Append($"Content-Length: {finalContent.Length}\r\n");
+                }
+                else
+                {
+                    b.Append($"Content-Length: {sContent.Length}\r\n");
                     finalContent = memoryStream;
                 }
-            }      
+                Console.WriteLine(finalContent);
+            }
+            else if (content is byte[] bContent)
+            {
+                MemoryStream memoryStream = new(bContent);
+                b.Append("Content-Type: application/octet-stream\r\n");
+                b.Append($"Content-Length: {bContent.Length}\r\n");
+                finalContent = memoryStream;
+            }
 
             b.Append("\r\n");
             Console.WriteLine("PRESTREAM");

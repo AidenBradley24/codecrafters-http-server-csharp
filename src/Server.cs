@@ -67,7 +67,7 @@ public static class Server
                     content = headers["User-Agent"];
                     break;
                 case "files":
-                    FileInfo file = Path.Combine(fileStore, urlSections[2]);
+                    FileInfo file = new(Path.Combine(fileStore, urlSections[2]));
                     Console.WriteLine(file.FullName);
                     Console.WriteLine(File.Exists(file.FullName));
                     if (file.Exists)

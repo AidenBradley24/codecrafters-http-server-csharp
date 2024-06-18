@@ -113,15 +113,19 @@ public static class Server
                 switch (encoding)
                 {
                     case "gzip":
+                        Console.WriteLine("GZIP START");
                         finalContent = new GZipStream(memoryStream, CompressionLevel.Optimal);
                         b.Append($"Content-Encoding: gzip\r\n");
                         b.Append($"Content-Length: {finalContent.Length}\r\n");
+                        Console.WriteLine("GZIP END");
                         break;
                     default:
                         b.Append($"Content-Length: {sContent.Length}\r\n");
                         finalContent = memoryStream;
                         break;
                 }
+                Console.WriteLine("END");
+
             }
             else if (content is byte[] bContent)
             {
@@ -132,8 +136,11 @@ public static class Server
             }
 
             b.Append("\r\n");
+            Console.WriteLine("PRESTREAM");
+
             stream.Write(Encoding.UTF8.GetBytes(b.ToString()));
             finalContent?.CopyTo(stream);
+            Console.WriteLine("POSTSTREAM");
 
             client.Dispose();
             return Task.CompletedTask;

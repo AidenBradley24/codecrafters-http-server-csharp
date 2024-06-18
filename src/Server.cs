@@ -53,6 +53,8 @@ public static class Server
                 lineIndex++;
             }
 
+            Console.WriteLine("POST HEADERS");
+
             string? requestBody = method == "POST" ? string.Join("\r\n", lines[++lineIndex..])[..int.Parse(headers["Content-Length"])] : null;
             string[] urlSections = url.Split('/');
             string statusMessage = "200 OK";
@@ -67,6 +69,7 @@ public static class Server
                     content = urlSections[2];
                     break;
                 case "user-agent":
+                    Console.WriteLine("AGENT");
                     content = headers["User-Agent"];
                     break;
                 case "files":
@@ -98,6 +101,7 @@ public static class Server
                     statusMessage = "404 Not Found";
                     break;
             }
+            Console.WriteLine("PRE ENCODING");
 
             StringBuilder b = new();
             b.Append($"{httpVersion} {statusMessage}\r\n");

@@ -9,7 +9,7 @@ server.Start();
 while(true)
 {
     var client = server.AcceptTcpClient();
-    Task.Run(async () => { await HandleClient(client) });
+    Task.Run(async () => { await HandleClient(client); });
 }
 
 Task HandleClient(TcpClient client)

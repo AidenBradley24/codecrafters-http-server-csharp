@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Collections.Generic;
 
 TcpListener server = new TcpListener(IPAddress.Any, 4221);
 server.Start();
@@ -9,20 +10,28 @@ using var socket = server.AcceptSocket();
 byte[] buffer = new byte[1024];
 socket.Receive(buffer);
 string request = Encoding.UTF8.GetString(buffer);
-string[] sections = request.Split("\r\n");
+string[] lines = request.Split("\r\n");
 
-string[] requestLine = sections[0].Split(' ');
+string[] requestLine = lines[0].Split(' ');
 string method = requestLine[0];
 string url = requestLine[1];
 string httpVersion = requestLine[2];
 
+// headers
+Dictionary<string, string> headers = new();
+int lineIndex = 1;
+while (!string.IsNullOrEmpty(lines[lineIndex]))
+{
+    string line = lines[lineIndex];
+    string label = line[..line.IndexOf(':')];
+    string content = line[(line.IndexOf(':') + 2)..];
+    headers.Add(label, content);
+    lineIndex++;
+}
+
 string[] urlSections = url.Split('/');
 string statusMessage = "200 OK";
-
 string? content = null;
-
-Console.WriteLine(urlSections[1]);
-
 switch (urlSections[1])
 {
     case "":
@@ -30,6 +39,9 @@ switch (urlSections[1])
         break;
     case "echo":
         content = urlSections[2];
+        break;
+    case "user-agent":
+        content = headers["User-Agent"];
         break;
     default:
         statusMessage = "404 Not Found";

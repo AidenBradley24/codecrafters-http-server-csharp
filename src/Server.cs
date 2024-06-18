@@ -9,7 +9,7 @@ server.Start();
 while(true)
 {
     var client = server.AcceptTcpClient();
-    Task.Run(() => HandleClient(client));
+    Task.Run(async () => { await HandleClient(client) });
 }
 
 Task HandleClient(TcpClient client)
@@ -74,4 +74,5 @@ Task HandleClient(TcpClient client)
 
     stream.Write(Encoding.UTF8.GetBytes(b.ToString()));
     client.Dispose();
+    return Task.CompletedTask;
 }

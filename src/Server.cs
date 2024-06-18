@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Collections.Generic;
+using System.IO;
 
 TcpListener server = new TcpListener(IPAddress.Any, 4221);
 server.Start();
@@ -40,7 +41,7 @@ Task HandleClient(TcpClient client)
 
     string[] urlSections = url.Split('/');
     string statusMessage = "200 OK";
-    string? content = null;
+    object? content = null;
     switch (urlSections[1])
     {
         case "":
@@ -52,6 +53,17 @@ Task HandleClient(TcpClient client)
         case "user-agent":
             content = headers["User-Agent"];
             break;
+        case "files":
+            FileInfo file = new(urlSections[2]);
+            if (file.Exists)
+            {
+                content = File.ReadAllBytes(file.FullName);
+            }
+            else
+            {
+                statusMessage = "404 Not Found";
+            }
+            break;
         default:
             statusMessage = "404 Not Found";
             break;
@@ -60,19 +72,29 @@ Task HandleClient(TcpClient client)
     StringBuilder b = new();
     b.Append($"{httpVersion} {statusMessage}\r\n");
 
-    if (content != null)
+    byte[]? finalContent;
+    if (content == null)
+    {
+        // do nothing
+        finalContent = null;
+    }
+    else if (content is string sContent)
     {
         b.Append("Content-Type: text/plain\r\n");
-        b.Append($"Content-Length: {content.Length}\r\n");
+        b.Append($"Content-Length: {sContent.Length}\r\n");
+        finalContent = Encoding.UTF8.GetBytes(sContent);
     }
-    b.Append("\r\n");
-    if (content != null)
+    else if (content is byte[] bContent)
     {
-        b.Append(content);
-        Console.WriteLine(content);
+        b.Append("Content-Type: application/octet-stream\r\n");
+        b.Append($"Content-Length: {bContent.Length}\r\n");
+        finalContent = bContent;
     }
 
+    b.Append("\r\n");
     stream.Write(Encoding.UTF8.GetBytes(b.ToString()));
+    if (finalContent != null) stream.Write(finalContent);
+
     client.Dispose();
     return Task.CompletedTask;
 }

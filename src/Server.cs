@@ -112,13 +112,13 @@ public static class Server
                 headers.TryGetValue("Accept-Encoding", out string? encodings);
                 Console.WriteLine(encodings);
                 HashSet<string> encodingOptions = encodings == null ? [] : [.. encodings?.Split(',').Select(s => s.Trim())];
-                MemoryStream memoryStream = new(Encoding.UTF8.GetBytes(sContent));
+                MemoryStream memoryStream = new();
                 b.Append("Content-Type: text/plain\r\n");
 
                 if (encodingOptions.Contains("gzip"))
                 {
                     Console.WriteLine("GZIP HERE");
-                    finalContent = new GZipStream(memoryStream, CompressionLevel.Optimal);
+                    finalContent = new GZipStream(memoryStream, CompressionMode.Compress, true);
                     b.Append($"Content-Encoding: gzip\r\n");
                     b.Append($"Content-Length: {finalContent.Length}\r\n");
                     Console.WriteLine("YIPPEE!");
@@ -129,7 +129,8 @@ public static class Server
                     finalContent = memoryStream;
                     Console.WriteLine("NORMAL TEXT");
                 }
-                Console.WriteLine(finalContent);
+
+                finalContent.Write(Encoding.UTF8.GetBytes(sContent)); 
             }
             else if (content is byte[] bContent)
             {

@@ -52,7 +52,7 @@ public static class Server
                 lineIndex++;
             }
 
-            string requestBody = string.Join("\r\n", lines[lineIndex..]);
+            string requestBody = string.Join("\r\n", lines[++lineIndex..])[..int.Parse(headers["Content-Length"])];
             
             string[] urlSections = url.Split('/');
             string statusMessage = "200 OK";

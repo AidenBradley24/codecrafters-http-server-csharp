@@ -69,7 +69,7 @@ public static class Server
                     content = headers["User-Agent"];
                     break;
                 case "files":
-                    FileInfo file = new(Path.Combine(fileStore, urlSections[2]));\
+                    FileInfo file = new(Path.Combine(fileStore, urlSections[2]));
                     Console.WriteLine(method);
                     switch (method)
                     {

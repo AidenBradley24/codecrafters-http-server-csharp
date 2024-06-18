@@ -72,6 +72,6 @@ Task HandleClient(TcpClient client)
         Console.WriteLine(content);
     }
 
-    stream.Write(Encoding.UTF8.GetBytes(b.ToString())
+    stream.Write(Encoding.UTF8.GetBytes(b.ToString()));
     client.Dispose();
 }

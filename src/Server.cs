@@ -120,7 +120,7 @@ public static class Server
                     Console.WriteLine("GZIP HERE");
                     finalContent = new GZipStream(memoryStream, CompressionMode.Compress, true);
                     b.Append($"Content-Encoding: gzip\r\n");
-                    b.Append($"Content-Length: {finalContent.Length}\r\n");
+                    b.Append($"Content-Length: {0}\r\n");
                     Console.WriteLine("YIPPEE!");
                 }
                 else

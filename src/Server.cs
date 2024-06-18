@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 
 public static class Server
 {
@@ -101,23 +102,39 @@ public static class Server
             StringBuilder b = new();
             b.Append($"{httpVersion} {statusMessage}\r\n");
 
-            byte[]? finalContent = null;
+            Stream? finalContent = null;
             if (content is string sContent)
             {
+                MemoryStream memoryStream = new(Encoding.UTF8.GetBytes(sContent));
                 b.Append("Content-Type: text/plain\r\n");
-                b.Append($"Content-Length: {sContent.Length}\r\n");
-                finalContent = Encoding.UTF8.GetBytes(sContent);
+
+                if (headers.TryGetValue("Accept-Encoding", out string? encoding))
+                {
+                    switch(encoding)
+                    {
+                        case "gzip":
+                            finalContent = new GZipStream(memoryStream, CompressionLevel.Optimal);
+                            b.Append($"Content-Encoding: gzip\r\n");
+                            b.Append($"Content-Length: {sContent.Length}\r\n");
+                            break;
+                        default:
+                            b.Append($"Content-Length: {sContent.Length}\r\n");
+                            finalContent = memoryStream;
+                            break;
+                    }
+                }
             }
             else if (content is byte[] bContent)
             {
+                MemoryStream memoryStream = new(bContent);
                 b.Append("Content-Type: application/octet-stream\r\n");
                 b.Append($"Content-Length: {bContent.Length}\r\n");
-                finalContent = bContent;
+                finalContent = memoryStream;
             }
 
             b.Append("\r\n");
             stream.Write(Encoding.UTF8.GetBytes(b.ToString()));
-            if (finalContent != null) stream.Write(finalContent);
+            finalContent?.CopyTo(stream);
 
             client.Dispose();
             return Task.CompletedTask;

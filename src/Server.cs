@@ -130,6 +130,7 @@ public static class Server
                 }
 
                 finalContent.Write(Encoding.UTF8.GetBytes(sContent));
+                Console.WriteLine("YIPPEE3!");
                 b.Append($"Content-Length: {finalContent.Position}\r\n");
                 Console.WriteLine("YIPPEE2!");
             }

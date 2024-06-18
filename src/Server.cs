@@ -33,13 +33,10 @@ public static class Server
             stream.Read(buffer);
 
             string request = Encoding.UTF8.GetString(buffer);
-
             string[] lines = request.Split("\r\n");
-
             string[] requestLine = lines[0].Split(' ');
             string method = requestLine[0];
             string url = requestLine[1];
-            Console.WriteLine(url);
 
             string httpVersion = requestLine[2];
 
@@ -55,18 +52,11 @@ public static class Server
                 lineIndex++;
             }
 
-            Console.WriteLine("past headers");
-
             string? requestBody = method == "POST" ? string.Join("\r\n", lines[++lineIndex..])[..int.Parse(headers["Content-Length"])] : null;
-            Console.WriteLine("past request body");
-
             string[] urlSections = url.Split('/');
             string statusMessage = "200 OK";
             object? content = null;
-            Console.WriteLine("url sections:");
-            Console.WriteLine(urlSections[1]);
-            Console.WriteLine("end url sections");
-            Console.WriteLine(urlSections[1].Length);
+
             switch (urlSections[1])
             {
                 case "":
@@ -80,7 +70,6 @@ public static class Server
                     break;
                 case "files":
                     FileInfo file = new(Path.Combine(fileStore, urlSections[2]));
-                    Console.WriteLine(method);
                     switch (method)
                     {
                         case "GET":

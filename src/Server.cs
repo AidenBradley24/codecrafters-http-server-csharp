@@ -125,6 +125,7 @@ public static class Server
                 {
                     b.Append($"Content-Length: {sContent.Length}\r\n");
                     finalContent = memoryStream;
+                    Console.WriteLine("NORMAL TEXT");
                 }
                 Console.WriteLine(finalContent);
             }

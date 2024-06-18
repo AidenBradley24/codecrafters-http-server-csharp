@@ -107,21 +107,20 @@ public static class Server
             {
                 MemoryStream memoryStream = new(Encoding.UTF8.GetBytes(sContent));
                 b.Append("Content-Type: text/plain\r\n");
-
-                if (headers.TryGetValue("Accept-Encoding", out string? encoding))
+                headers.TryGetValue("Accept-Encoding", out string? encoding);
+                Console.WriteLine("TEST");
+                Console.WriteLine(sContent);
+                switch (encoding)
                 {
-                    switch(encoding)
-                    {
-                        case "gzip":
-                            finalContent = new GZipStream(memoryStream, CompressionLevel.Optimal);
-                            b.Append($"Content-Encoding: gzip\r\n");
-                            b.Append($"Content-Length: {finalContent.Length}\r\n");
-                            break;
-                        default:
-                            b.Append($"Content-Length: {sContent.Length}\r\n");
-                            finalContent = memoryStream;
-                            break;
-                    }
+                    case "gzip":
+                        finalContent = new GZipStream(memoryStream, CompressionLevel.Optimal);
+                        b.Append($"Content-Encoding: gzip\r\n");
+                        b.Append($"Content-Length: {finalContent.Length}\r\n");
+                        break;
+                    default:
+                        b.Append($"Content-Length: {sContent.Length}\r\n");
+                        finalContent = memoryStream;
+                        break;
                 }
             }
             else if (content is byte[] bContent)

@@ -72,13 +72,8 @@ Task HandleClient(TcpClient client)
     StringBuilder b = new();
     b.Append($"{httpVersion} {statusMessage}\r\n");
 
-    byte[]? finalContent;
-    if (content == null)
-    {
-        // do nothing
-        finalContent = null;
-    }
-    else if (content is string sContent)
+    byte[]? finalContent = null;
+    if (content is string sContent)
     {
         b.Append("Content-Type: text/plain\r\n");
         b.Append($"Content-Length: {sContent.Length}\r\n");

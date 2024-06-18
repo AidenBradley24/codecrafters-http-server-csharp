@@ -16,7 +16,38 @@ string method = requestLine[0];
 string url = requestLine[1];
 string httpVersion = requestLine[2];
 
-string message = url == "/" ? "200 OK" : "404 Not Found";
-string response = $"{httpVersion} {message}\r\n\r\n";
-Console.WriteLine(response);
-socket.Send(Encoding.UTF8.GetBytes(response));
+string[] urlSections = url.Split('/');
+string statusMessage = "200 OK";
+
+string? content = null;
+
+switch (urlSections[0])
+{
+    case "":
+        // do nothing
+        break;
+    case "echo":
+        content = urlSections[1];
+        break;
+    default:
+        statusMessage = "404 Not Found";
+        break;
+}
+
+StringBuilder b = new();
+b.Append($"{httpVersion} {statusMessage}\r\n");
+Console.WriteLine(status);
+
+if (content != null)
+{
+    b.Append("Content-Type: text/plain\r\n");
+    b.Append($"Content-Length: {content.length}\r\n");
+}
+b.Append("\r\n");
+if (content != null)
+{
+    b.Append(content);
+    Console.WriteLine(content);
+}
+
+socket.Send(Encoding.UTF8.GetBytes(status));

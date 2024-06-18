@@ -57,13 +57,16 @@ public static class Server
 
             Console.WriteLine("past headers");
 
-            string requestBody = string.Join("\r\n", lines[++lineIndex..])[..int.Parse(headers["Content-Length"])];
-            
+            string? requestBody = lineIndex + 1 < lines.Length ? string.Join("\r\n", lines[++lineIndex..])[..int.Parse(headers["Content-Length"])] : null;
+            Console.WriteLine("past request body");
+
             string[] urlSections = url.Split('/');
             string statusMessage = "200 OK";
             object? content = null;
+            Console.WriteLine("url sections:");
             Console.WriteLine(urlSections[1]);
-
+            Console.WriteLine("end url sections");
+            Console.WriteLine(urlSections[1].Length);
             switch (urlSections[1])
             {
                 case "":
@@ -95,7 +98,7 @@ public static class Server
                         case "POST":
                             {
                                 using var writeStream = file.OpenWrite();
-                                writeStream.Write(Encoding.UTF8.GetBytes(requestBody));
+                                writeStream.Write(Encoding.UTF8.GetBytes(requestBody!));
                                 statusMessage = "201 Created";
                             }
                             break;

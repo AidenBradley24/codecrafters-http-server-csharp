@@ -8,4 +8,4 @@ Console.WriteLine("Logs from your program will appear here!");
 TcpListener server = new TcpListener(IPAddress.Any, 4221);
 server.Start();
 using var socket = server.AcceptSocket();
-socket.Send(Encoding.UTF8.GetBytes("HTTP/1.1 200 OK\r\n\r\n"))
+socket.Send(Encoding.UTF8.GetBytes("HTTP/1.1 200 OK\r\n\r\n"));

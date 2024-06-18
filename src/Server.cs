@@ -33,12 +33,14 @@ public static class Server
             stream.Read(buffer);
 
             string request = Encoding.UTF8.GetString(buffer);
-            Console.WriteLine(request);
+
             string[] lines = request.Split("\r\n");
 
             string[] requestLine = lines[0].Split(' ');
             string method = requestLine[0];
             string url = requestLine[1];
+            Console.WriteLine(url);
+
             string httpVersion = requestLine[2];
 
             // headers
@@ -58,7 +60,6 @@ public static class Server
             string[] urlSections = url.Split('/');
             string statusMessage = "200 OK";
             object? content = null;
-            Console.WriteLine(url);
             switch (urlSections[1])
             {
                 case "":

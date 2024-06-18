@@ -52,6 +52,8 @@ public static class Server
                 lineIndex++;
             }
 
+            string requestBody = string.Join("\r\n", lines[lineIndex..]);
+            
             string[] urlSections = url.Split('/');
             string statusMessage = "200 OK";
             object? content = null;
@@ -68,15 +70,27 @@ public static class Server
                     break;
                 case "files":
                     FileInfo file = new(Path.Combine(fileStore, urlSections[2]));
-                    Console.WriteLine(file.FullName);
-                    Console.WriteLine(File.Exists(file.FullName));
-                    if (file.Exists)
+                    switch (method)
                     {
-                        content = File.ReadAllBytes(file.FullName);
-                    }
-                    else
-                    {
-                        statusMessage = "404 Not Found";
+                        case "GET":
+                            {
+                                if (file.Exists)
+                                {
+                                    content = File.ReadAllBytes(file.FullName);
+                                }
+                                else
+                                {
+                                    statusMessage = "404 Not Found";
+                                }
+                            }
+                            break;
+                        case "POST":
+                            {
+                                using var writeStream = file.OpenWrite();
+                                writeStream.Write(Encoding.UTF8.GetBytes(requestBody));
+                                statusMessage = "201 Created";
+                            }
+                            break;
                     }
                     break;
                 default:

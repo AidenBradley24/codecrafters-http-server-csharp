@@ -117,9 +117,11 @@ public static class Server
 
                 if (encodingOptions.Contains("gzip"))
                 {
+                    Console.WriteLine("GZIP HERE");
                     finalContent = new GZipStream(memoryStream, CompressionLevel.Optimal);
                     b.Append($"Content-Encoding: gzip\r\n");
                     b.Append($"Content-Length: {finalContent.Length}\r\n");
+                    Console.WriteLine("YIPPEE!");
                 }
                 else
                 {
